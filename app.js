@@ -9,6 +9,8 @@ import swaggerSpec from './app/helper/swagger.js';
 
 import routerUsuario from './app/routers/usuario/usuario.router.js';
 import routerAuth from './app/routers/usuario/auth.router.js';
+import routerCategoria from './app/routers/categoria/categoria.router.js';
+import routerProducto from './app/routers/producto/producto.router.js';
 
 
 
@@ -45,6 +47,8 @@ app.use(cors({
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(`/api/v1`, routerUsuario)
+app.use(`/api/v1`, routerCategoria)
+app.use(`/api/v1`, routerProducto)
 app.use(`/api/v1`, routerAuth)
 
 

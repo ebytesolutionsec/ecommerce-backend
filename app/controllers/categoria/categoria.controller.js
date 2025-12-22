@@ -1,4 +1,5 @@
 import categoriaSchema from "../../models/categoria/categoria.models.js"
+import paginationHelper from "../../helper/pagination.helper.js"
 
 const categoriaController = {
     
@@ -15,9 +16,10 @@ const categoriaController = {
 
             const categoria = new categoriaSchema({
                 ...req.body,
+                dateCreation: new Date()
             })
 
-            categoria.save();
+            await categoria.save();
 
             res.status(201).json({
                 message: "Categoria creada exitosamente",

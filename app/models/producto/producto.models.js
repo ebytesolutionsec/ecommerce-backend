@@ -4,7 +4,7 @@ const productoSchema = new mongoose.Schema({
     name : { type: String, required: true },
     //Codigo unico para cada producto
     sku: { type: String, required: true, unique: true },
-    img_prod : { type: String, required: true },
+    img_prod : { type: String },
     descripcion : { type: String, required: true },
     descripcion_corta : { type: String, required: true },
     categoria : { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria', required: true },

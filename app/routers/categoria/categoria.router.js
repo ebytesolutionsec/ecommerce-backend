@@ -130,3 +130,5 @@ routerCategoria.patch('/categoria/edit/:id', verifyToken, categoriaController.ed
  *         description: Error interno del servidor
  */
 routerCategoria.delete('/categoria/delete/:id', verifyToken, categoriaController.deleteCategoria);
+
+export default routerCategoria;
