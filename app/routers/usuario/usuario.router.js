@@ -1,5 +1,6 @@
 import { Router } from "express";
 import usuarioController from "../../controllers/usuario/usuario.controller.js"
+import verifyToken from '../../middleware/auth.middleware.js'
 
 const routerUsuario = Router()
 
@@ -33,7 +34,7 @@ const routerUsuario = Router()
  *       500:
  *         description: Error interno del servidor
  */
-routerUsuario.post('/usuario/create', usuarioController.createUser);
+routerUsuario.post('/usuario/create', verifyToken, usuarioController.createUser);
 
 
 /**
@@ -66,7 +67,7 @@ routerUsuario.post('/usuario/create', usuarioController.createUser);
  *       500:
  *         description: Error interno del servidor
  */
-routerUsuario.get('/usuario/list', usuarioController.userAllList);
+routerUsuario.get('/usuario/list', verifyToken, usuarioController.userAllList);
 
 
 /**
@@ -101,7 +102,7 @@ routerUsuario.get('/usuario/list', usuarioController.userAllList);
  *       500:
  *         description: Error interno del servidor
  */
-routerUsuario.patch('/usuario/edit/:id', usuarioController.editUser);
+routerUsuario.patch('/usuario/edit/:id', verifyToken, usuarioController.editUser);
 
 /**
  * @swagger
@@ -133,7 +134,7 @@ routerUsuario.patch('/usuario/edit/:id', usuarioController.editUser);
  *       500:
  *         description: Error interno del servidor
  */
-routerUsuario.delete('/usuario/delete/:id', usuarioController.deleteUser);
+routerUsuario.delete('/usuario/delete/:id',verifyToken, usuarioController.deleteUser);
 
 /**
  * @swagger
@@ -157,6 +158,6 @@ routerUsuario.delete('/usuario/delete/:id', usuarioController.deleteUser);
  *       500:
  *         description: Error interno del servidor
  */
-routerUsuario.get('/usuario/info/:id', usuarioController.searchUser)
+routerUsuario.get('/usuario/info/:id', verifyToken, usuarioController.searchUser)
 
 export default routerUsuario;
