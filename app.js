@@ -51,5 +51,10 @@ app.use(`/api/v1`, routerCategoria)
 app.use(`/api/v1`, routerProducto)
 app.use(`/api/v1`, routerAuth)
 
+/**
+ * Servir imagenes y archivos
+*/
+app.use('/uploads/productos', express.static('uploads'));
+
 
 export default app;

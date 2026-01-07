@@ -1,5 +1,7 @@
 import productoSchema from "../../models/producto/producto.models.js"
 import paginationHelper from "../../helper/pagination.helper.js"
+import fs from 'fs';
+
 
 const productoController = {
 
@@ -7,14 +9,13 @@ const productoController = {
         try {
 
             const {
-                name, sku, img_prod, descripcion, descripcion_corta, categoria, precio,
+                name, sku, descripcion, descripcion_corta, categoria, precio,
                 precio_descuento, stock, disponible, rating, destacado, estado
             } = req.body;
 
             if (
                 !name ||
                 !sku ||
-                !img_prod ||
                 !descripcion ||
                 !descripcion_corta ||
                 !categoria ||
@@ -27,19 +28,27 @@ const productoController = {
                 })
             }
 
+            if(!req.file){
+                return res.status(400).json({ message: 'No se subio ninguina imagen'})
+            }
+
+            console.log(req.file)
+
             // 🔐 Verificar SKU duplicado
-            const existeSku = await productoSchema.findOne({ sku })
+            const existeSku = await productoSchema.findOne({ sku });
+
             if (existeSku) {
+                fs.unlinkSync(req.file.path);
                 return res.status(409).json({
                     ok: false,
                     message: 'Ya existe un producto con este SKU'
-                })
+                });
             }
 
             const nuevoProducto = new productoSchema({
                 name,
                 sku,
-                img_prod,
+                img_prod : `/uploads/productos/${req.file.filename}`,
                 descripcion,
                 descripcion_corta,
                 categoria,
@@ -61,6 +70,7 @@ const productoController = {
             })
 
         } catch (error) {
+            console.log(error)
             return res.status(500).json({
                 ok: false,
                 message: 'Error al crear el producto',
@@ -85,6 +95,10 @@ const productoController = {
         } catch (error) {
             res.status(500).json({ message: "Error al listar los productos", error });
         }
+    },
+
+    editarProducto : async ( req, res ) => {
+        
     }
 }
 

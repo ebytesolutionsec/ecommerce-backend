@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productoController from "../../controllers/producto/producto.controller.js"
 import verifyToken from '../../middleware/auth.middleware.js'
+import { uploadSingle } from "../../middleware/uploadFileMiddleware.js";
 
 const routerProducto = Router()
 
@@ -95,7 +96,7 @@ const routerProducto = Router()
  *       500:
  *         description: Error interno del servidor
  */
-routerProducto.post('/producto/create', verifyToken, productoController.createProducto);
+routerProducto.post('/producto/create', verifyToken, uploadSingle, productoController.createProducto);
 
 /**
  * @swagger
