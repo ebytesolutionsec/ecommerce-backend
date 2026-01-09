@@ -97,9 +97,93 @@ const productoController = {
         }
     },
 
-    editarProducto : async ( req, res ) => {
-        
+    infoProducto : async ( req, res ) => {
+        try {
+            
+            const { id } = req.params
+
+            const producto = await productoSchema.findById( id )
+
+            if(!producto){
+                return res.status(400).json({ message : "Producto no encontrado"})
+            }
+
+            return res.status(200).json({
+                data : producto
+            })
+
+        } catch (error) {
+            return res.status(500).json({
+                message: 'Error al buscar el producto',
+                error: error.message
+            })
+        }
+    },
+
+    searchProducto : async ( req, res ) => {
+        try {
+            const { q = "", page = 1, limit = 10 } = req.query
+
+            const regex = new RegExp(q,'i')
+
+            const matchConditions = []
+
+            if(q){
+                matchConditions.push({
+                    $or: [
+                        { name : regex },
+                        { 'categoria.name': regex }
+                    ]
+                })
+            }
+
+            const pipeline = [
+                {
+                    $lookup: {
+                        from: 'categorias',
+                        localField: 'categoria',
+                        foreignField: '_id',
+                        as: 'categoria'
+                    }
+                },
+                { $unwind: '$categoria' },
+
+                {
+                    $match: matchConditions.length > 0 ? { $and: matchConditions } : {}
+                }
+            ]
+
+            const totalPipeline = [...pipeline, { $count : 'total'}]
+            const totalResult = await productoSchema.aggregate(totalPipeline)
+
+            const total = totalResult.length > 0 ? totalResult[0].total : 0
+
+            const skip = ( Number(page) - 1 ) * Number(limit)
+            
+            const dataPipeline = [
+                ...pipeline,
+                { $skip: skip },
+                { $limit: Number(limit) }
+            ]
+
+            const producto = await productoSchema.aggregate(dataPipeline)
+            res.json({
+                total,
+                page:Number(page),
+                totalPages: Math.ceil(total / limit),
+                limit: Number(limit),
+                data: producto
+            })
+            
+
+        } catch ( error ) {
+
+            console.error(error)
+            res.status(500).json({ message: error.message })
+            
+        }
     }
+
 }
 
 export default productoController

@@ -2,6 +2,7 @@ import { Router } from "express";
 import productoController from "../../controllers/producto/producto.controller.js"
 import verifyToken from '../../middleware/auth.middleware.js'
 import { uploadSingle } from "../../middleware/uploadFileMiddleware.js";
+import { resourceLimits } from "worker_threads";
 
 const routerProducto = Router()
 
@@ -102,8 +103,7 @@ routerProducto.post('/producto/create', verifyToken, uploadSingle, productoContr
  * @swagger
  * /producto/list:
  *   get:
- *     summary: Listar categorias con paginación
- *     description: Obtiene un listado paginado de categorias registradas en el sistema.
+ *     summary: Listar productos con paginación
  *     tags: [Productos]
  *     parameters:
  *       - in: query
@@ -129,6 +129,64 @@ routerProducto.post('/producto/create', verifyToken, uploadSingle, productoContr
  *         description: Error interno del servidor
  */
 routerProducto.get('/producto/list', verifyToken, productoController.listProducto);
+
+/**
+ * @swagger
+ * /producto/list/public:
+ *   get:
+ *     summary: Listar producto con paginación publica
+ *     tags: [Productos]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Cantidad de registros por página
+ *     responses:
+ *       200:
+ *         description: Lista de productos obtenida correctamente
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Parámetros de paginación inválidos
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerProducto.get('/producto/list/public', productoController.listProducto);
+
+/**
+ * @swagger
+ * /producto/info/public/{id}:
+ *   patch:
+ *     summary: Buscar información de un producto publica
+ *     tags: [Productos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del producto
+ *     requestBody:
+ *       required: true
+ *     responses:
+ *       200:
+ *         description: Correcto
+ *       400:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerProducto.get('/producto/info/public/:id', productoController.infoProducto)
+
+routerProducto.get('/producto/search/public', productoController.searchProducto)
 
 
 
