@@ -186,6 +186,23 @@ routerProducto.get('/producto/list/public', productoController.listProducto);
  */
 routerProducto.get('/producto/info/public/:id', productoController.infoProducto)
 
+/**
+ * @swagger
+ * /producto/search/public:
+ *   get:
+ *     summary: Buscar productos por query
+ *     description: Buscar productos por query se envia asi '/search/public?q=', se puede buscar por nombre de producto y nombre de la categoria
+ *     tags: [Productos]
+ *     requestBody:
+ *       required: true
+ *     responses:
+ *       200:
+ *         description: Correcto
+ *       400:
+ *         description: Producto no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
 routerProducto.get('/producto/search/public', productoController.searchProducto)
 
 
