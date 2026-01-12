@@ -39,6 +39,38 @@ routerUsuario.post('/usuario/create', verifyToken, usuarioController.createUser)
 
 /**
  * @swagger
+ * /usuario/create/comprador:
+ *   post:
+ *     summary: Crear un nuevo usuario
+ *     description: |
+ *       Crea un nuevo usuario en el sistema.
+ *       El correo electrónico y el DNI deben ser únicos.
+ *       La contraseña se almacena de forma segura (hasheada).
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             dni: "111111111"
+ *             fullName: "Usuario de Prueba"
+ *             email: "test@email.com"
+ *             direccion: "Loja, Ecuador"
+ *             role: "comprador"
+ *             phone: "0999999999"
+ *             password: "12345678"
+ *     responses:
+ *       201:
+ *         description: Usuario creado exitosamente
+ *       400:
+ *         description: Datos inválidos o usuario ya existente
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerUsuario.post('/usuario/create/comprador', usuarioController.createUserComprador);
+
+/**
+ * @swagger
  * /usuario/list:
  *   get:
  *     summary: Listar usuarios con paginación

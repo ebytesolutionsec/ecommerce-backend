@@ -6,7 +6,7 @@ const userController = {
 
     createUser: async (req, res) => {
         try {
-            const { password, role, dni } = req.body;
+            const { password, dni } = req.body;
 
             //Verificar si el usuario ya existe
             const existUser = await userSchema.findOne({ dni })
@@ -22,6 +22,52 @@ const userController = {
 
             const user = new userSchema({
                 ...req.body,
+                role : 'superadmin',
+                password: hashedPassword,
+                dateCreation: new Date()
+            });
+
+            await user.save();
+
+            res.status(201).json({
+                message: "Usuario creado exitosamente",
+                user: {
+                    id: user._id,
+                    email: user.email,
+                    role: user.role
+                }
+            })
+
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    },
+
+    createUserComprador: async (req, res) => {
+        try {
+            const { password, dni, email } = req.body;
+
+            //Verificar si el usuario ya existe
+            const existUserDni = await userSchema.findOne({ dni })
+
+            if (existUserDni) {
+                return res.status(400).json({ message: "Este usuario ya existe" })
+            }
+
+            const existUserEmail = await userSchema.findOne({ email })
+
+            if (existUserEmail) {
+                return res.status(400).json({ message: "Este correo ya se encuentra registrado" })
+            }
+
+            let hashedPassword = null;
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password, salt)
+
+
+            const user = new userSchema({
+                ...req.body,
+                role: 'comprador',
                 password: hashedPassword,
                 dateCreation: new Date()
             });

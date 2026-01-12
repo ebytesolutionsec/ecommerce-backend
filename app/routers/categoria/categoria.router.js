@@ -40,6 +40,38 @@ routerCategoria.get('/categoria/list', verifyToken, categoriaController.listCate
 
 /**
  * @swagger
+ * /categoria/list/public:
+ *   get:
+ *     summary: Listar categorias con paginación
+ *     description: Obtiene un listado paginado de categorias registradas en el sistema Publica.
+ *     tags: [Categoria]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Cantidad de registros por página
+ *     responses:
+ *       200:
+ *         description: Lista de categorias obtenida correctamente
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Parámetros de paginación inválidos
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerCategoria.get('/categoria/list/public', categoriaController.listCategoria);
+
+/**
+ * @swagger
  * /categoria/create:
  *   post:
  *     summary: Crear una nueva categoria
