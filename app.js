@@ -11,6 +11,9 @@ import routerUsuario from './app/routers/usuario/usuario.router.js';
 import routerAuth from './app/routers/usuario/auth.router.js';
 import routerCategoria from './app/routers/categoria/categoria.router.js';
 import routerProducto from './app/routers/producto/producto.router.js';
+import routerOrders from './app/routers/orders/orders.router.js';
+import routerPayment from './app/routers/payment/payment.router.js';
+import routerPayMethod from './app/routers/paymethod/paymethod.router.js';
 
 
 
@@ -49,6 +52,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(`/api/v1`, routerUsuario)
 app.use(`/api/v1`, routerCategoria)
 app.use(`/api/v1`, routerProducto)
+app.use('/api/v1', routerOrders)
+app.use('/api/v1', routerPayment)
+app.use('/api/v1', routerPayMethod)
 app.use(`/api/v1`, routerAuth)
 
 /**

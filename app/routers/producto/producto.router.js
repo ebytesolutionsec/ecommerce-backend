@@ -2,7 +2,7 @@ import { Router } from "express";
 import productoController from "../../controllers/producto/producto.controller.js"
 import verifyToken from '../../middleware/auth.middleware.js'
 import { uploadSingle } from "../../middleware/uploadFileMiddleware.js";
-import { resourceLimits } from "worker_threads";
+
 
 const routerProducto = Router()
 
