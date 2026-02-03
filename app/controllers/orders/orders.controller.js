@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import productoSchema from "../../models/producto/producto.models.js";
 import ordersSchema from "../../models/orders/orders.models.js"
 import itemOrderSchema from "../../models/item/item.order.models.js"
+import generateOrdenNumberHelper from "../../helper/generate.orden.number.helper.js"
 
 const ordersController = {
 
@@ -59,6 +60,7 @@ const ordersController = {
             const tax = subtotal * 0.12
             const shipping_cost = 0;
             const total = subtotal + tax + shipping_cost
+            const orden_number = await generateOrdenNumberHelper.generateOrdenNumber()
 
             //Crear Orden
             const order = await ordersSchema.create(
@@ -69,7 +71,8 @@ const ordersController = {
                         tax,
                         shipping_cost,
                         total,
-                        shipping_address
+                        shipping_address,
+                        order_number: orden_number
                     }
                 ],
                 
