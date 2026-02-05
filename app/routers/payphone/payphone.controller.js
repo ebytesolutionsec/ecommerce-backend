@@ -31,4 +31,29 @@ const routerPayphone = Router()
  */
 routerPayphone.post('/payphone/redirect', payphoneController.redirectPayphonePayment)
 
+/**
+ * @swagger
+ * /payphone/confirm:
+ *   post:
+ *     summary: Confirmar pagos
+ *     description: |
+ *       Confirmas pago de payphone
+ *     tags: [Payment]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             id: 0
+ *             clientTransactionId: "Este es una codigo unico que lo generas desde el front, automanticamente por cada transacción"
+ *     responses:
+ *       201:
+ *         description: Confirmación completa
+ *       400:
+ *         description: Confirmacion cancelada
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerPayphone.post('/payphone/confirm', payphoneController.verifyConfirmPayphone)
+
 export default routerPayphone
