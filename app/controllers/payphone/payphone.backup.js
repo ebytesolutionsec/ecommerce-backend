@@ -3,7 +3,6 @@ import mongoose from "mongoose"
 import orderSchmea from "../../models/orders/orders.models.js"
 import paymentSchema from "../../models/payment/payment.models.js"
 import productSchema from "../../models/producto/producto.models.js"
-import socket from "../../helper/socket.io.js"
 
 const payphoneController = {
 
@@ -64,9 +63,7 @@ const payphoneController = {
 
         try {
 
-            const { id , clientTransactionId, idOrden } = req.body
-
-            console.log("ID" , id, "Client", clientTransactionId, "order" , idOrden)
+            const { id , clientTransactionId } = req.body
 
             if(!id || !clientTransactionId){
                 return res.status(400).json({
@@ -76,11 +73,7 @@ const payphoneController = {
 
             const response = await axios.post(
                 process.env.PAYPHONE_API_CONFIRM,
-                {
-                    id: id, 
-                    clientTxId : clientTransactionId
-                },
-
+                {id, clientTransactionId},
                 {
                     headers:{
                         Authorization: `Bearer ${process.env.TOKEN_PAYPHONE}`,
@@ -91,7 +84,7 @@ const payphoneController = {
 
             const payphoneData = response.data;
 
-            const order = await orderSchmea.findById(idOrden)
+            const order = await orderSchmea.findById(clientTransactionId)
                 .populate("items")
                 .session(session)
             
@@ -99,9 +92,7 @@ const payphoneController = {
                 throw new Error("Orden no encontrada")
             }
 
-            const io = socket.getIO()
-
-            console.log("Payphone Data", payphoneData)
+            const io = require("../../helper/socket.io.js").getIO()
 
             if(payphoneData.statusCode === 3){
                 if(order.status === "paid"){

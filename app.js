@@ -6,6 +6,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './app/helper/swagger.js';
+import socket from "./app/helper/socket.io.js"
+import http from "http"
 
 import routerUsuario from './app/routers/usuario/usuario.router.js';
 import routerAuth from './app/routers/usuario/auth.router.js';
@@ -21,6 +23,9 @@ import routerPayphone from './app/routers/payphone/payphone.controller.js';
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app)
+
+socket.init(server)
 
 //Configure Files from ES Module
 const __filename = fileURLToPath(import.meta.url);
