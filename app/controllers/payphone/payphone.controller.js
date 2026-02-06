@@ -64,11 +64,11 @@ const payphoneController = {
 
         try {
 
-            const { id , clientTransactionId, idOrden } = req.body
+            const { id , clientTransactionId, idOrden, idPaymentMethod } = req.body
 
-            console.log("ID" , id, "Client", clientTransactionId, "order" , idOrden)
+            console.log("ID" , id, "Client", clientTransactionId, "order" , idOrden, "Payment Metod", idPaymentMethod)
 
-            if(!id || !clientTransactionId){
+            if(!id || !clientTransactionId || !idOrden || !idPaymentMethod ){
                 return res.status(400).json({
                     messge : "Faltan datos obligatorios"
                 })
@@ -110,6 +110,18 @@ const payphoneController = {
                     })
                 }
 
+                for(const item of order.items){
+                    const product = await productSchema.findById(item.product).session(session)
+
+                    product.stock -= item.quantity
+                    await product.save({ session })
+
+                    io.emit("stockUpdated", {
+                        productId: product._id,
+                        change : item.quantity
+                    })
+                }
+
                 order.status = "paid"
                 await order.save({ session })
 
@@ -119,9 +131,11 @@ const payphoneController = {
                         transaction_id : id,
                         amount: order.total,
                         status: "approved",
-                        provider_response: payphoneData
+                        provider_response: payphoneData,
+                        payment_method: idPaymentMethod
                     }]
                 )
+
 
                 await session.commitTransaction()
                 session.endSession()

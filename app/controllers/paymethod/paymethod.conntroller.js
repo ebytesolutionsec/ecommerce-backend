@@ -1,5 +1,7 @@
 
 import paymentMethodSchema from '../../models/paymethod/payment.method.models.js'
+import paginationHelper from "../../helper/pagination.helper.js"
+
 
 const paymethodCotroller = {
 
@@ -44,6 +46,24 @@ const paymethodCotroller = {
                 message: 'Error al crear el método de pago',
                 error: error.message
             });
+        }
+    },
+
+    listPaymentMethod : async ( req, res ) => {
+        try {
+            
+            const { page, limit, ...filters } = req.query
+
+            const result = await paginationHelper.paginate(paymentMethodSchema,{
+                page, 
+                limit, 
+                filter: filters,
+            })
+
+            res.json(result)
+
+        } catch (error) {
+            res.status(500).json({ message: "Error al listar los pagos", error });
         }
     }
 }

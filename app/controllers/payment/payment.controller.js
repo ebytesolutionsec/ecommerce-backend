@@ -2,6 +2,7 @@ import orderSchema from "../../models/orders/orders.models.js"
 import paymentMethodSchema from "../../models/paymethod/payment.method.models.js"
 import paymentSchema from "../../models/payment/payment.models.js"
 import mongoose from "mongoose"
+import paginationHelper from "../../helper/pagination.helper.js"
 
 const paymentController = {
 
@@ -88,6 +89,24 @@ const paymentController = {
                 message: 'Error al procesar el pago',
                 error: error.message
             });
+        }
+    },
+
+    listPaymentController : async ( req, res ) => {
+        try {
+            
+            const { page, limit, ...filters } = req.query
+
+            const result = await paginationHelper.paginate(paymentSchema,{
+                page, 
+                limit, 
+                filter: filters,
+            })
+
+            res.json(result)
+
+        } catch (error) {
+            res.status(500).json({ message: "Error al listar los pagos", error });
         }
     }
 

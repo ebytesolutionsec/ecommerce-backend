@@ -31,4 +31,35 @@ const routerPayMethod = Router()
  */
 routerPayMethod.post('/payment/method/create', verifyToken, payMethodController.createPaymentMethod)
 
+/**
+ * @swagger
+ * /payment/method/list:
+ *   get:
+ *     summary: Listar todos los metodos de pago
+ *     tags: [PaymentMethod]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Cantidad de registros por página
+ *     responses:
+ *       200:
+ *         description: Lista todos los pagos realizados
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Parámetros de paginación inválidos
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerPayMethod.get('/payment/method/list', verifyToken, payMethodController.listPaymentMethod)
+
 export default routerPayMethod
