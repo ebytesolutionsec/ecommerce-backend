@@ -44,9 +44,9 @@ routerPayphone.post('/payphone/redirect', payphoneController.redirectPayphonePay
  *       content:
  *         application/json:
  *           example:
- *             id: 0
+ *             id: "0"
  *             clientTransactionId: "Este es una codigo unico que lo generas desde el front, automanticamente por cada transacción"
- *             idOrden : "EL id de la orden",
+ *             idOrden : "EL id de la orden"
  *             idPaymentMethod : "Id del metodo de pago"
  *     responses:
  *       201:

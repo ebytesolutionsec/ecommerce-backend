@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const paymentMethodSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    provider: { type: String, required: true },
+    name: { type: String, require: true },
+    provider: { type: String, require: true },
     active: { type: Boolean, default: true },
     config: { type: Object }
 },

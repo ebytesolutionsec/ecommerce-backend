@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const itemOrderSchema = new mongoose.Schema({
-    order : { type : mongoose.Schema.Types.ObjectId, ref : 'Order', required: true },
-    product : { type : mongoose.Schema.Types.ObjectId, ref : 'Producto', required: true},
-    product_name : { type: String, required: true },
-    product_sku : { type : String, required: true},
-    quantity : { type : Number, required: true },
-    unit_price: { type : Number, required: true },
-    total_price: { type : Number, required: true }
+    order : { type : mongoose.Schema.Types.ObjectId, ref : 'Order', require: true },
+    product : { type : mongoose.Schema.Types.ObjectId, ref : 'Producto', require: true},
+    product_name : { type: String, require: true },
+    product_sku : { type : String, require: true},
+    quantity : { type : Number, require: true },
+    unit_price: { type : Number, require: true },
+    total_price: { type : Number, require: true }
 },
     { timestamps :  true }
 )

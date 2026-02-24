@@ -64,6 +64,8 @@ const payphoneController = {
 
         try {
 
+            console.log("Aquii")
+
             const { id , clientTransactionId, idOrden, idPaymentMethod } = req.body
 
             console.log("ID" , id, "Client", clientTransactionId, "order" , idOrden, "Payment Metod", idPaymentMethod)
@@ -152,6 +154,7 @@ const payphoneController = {
                     data: payphoneData
                 });
             }else{
+                console.log("Entre aqui")
                 if(order.status === "pending"){
                     for(const item of order.items){
                         const product = await productSchema.findById(item.product).session(session)
