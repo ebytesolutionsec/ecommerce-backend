@@ -62,4 +62,54 @@ routerPayMethod.post('/payment/method/create', verifyToken, payMethodController.
  */
 routerPayMethod.get('/payment/method/list', verifyToken, payMethodController.listPaymentMethod)
 
+/**
+ * @swagger
+ * /payment/method/{id}:
+ *   patch:
+ *     summary: Listar todos los metodos de pago
+ *     tags: [PaymentMethod]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del metodo de pago a editar
+ *     responses:
+ *       200:
+ *         description: Edita un metodo de pago
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Id proporcionado invalido
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerPayMethod.patch('/payment/method/:id', verifyToken, payMethodController.editPaymentMethod)
+
+/**
+ * @swagger
+ * /payment/method/{id}:
+ *   delete:
+ *     summary: Listar todos los metodos de pago
+ *     tags: [PaymentMethod]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del metodo de pago a eliminar
+ *     responses:
+ *       200:
+ *         description: Elimiar un metodo de pago
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Id proporcionado invalido
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerPayMethod.delete('/payment/method/:id', verifyToken, payMethodController.deletePaymentMethod)
+
 export default routerPayMethod

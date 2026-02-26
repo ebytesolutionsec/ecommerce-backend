@@ -65,6 +65,48 @@ const paymethodCotroller = {
         } catch (error) {
             res.status(500).json({ message: "Error al listar los pagos", error });
         }
+    },
+
+    editPaymentMethod : async ( req , res ) => {
+        try {
+            
+            const { ... rest } = req.body
+
+            const paymentMethod = await paymentMethodSchema.findByIdAndUpdate(
+                req.params.id,
+                { ...rest }
+            )
+
+            if(!paymentMethod){
+                return res.status(404).json({ message : "Metodo de pago no encontrado"})
+            }
+
+            res.status(200).json({ 
+                message: "Metodo de pago actualizado exitosamente", 
+                paymentMethod 
+            });
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Error al editar el usuario", error: error})
+        }
+    },
+
+    deletePaymentMethod : async ( req , res ) => {
+        try {
+
+            const paymentMethod = await paymentMethodSchema.findByIdAndDelete(req.params.id)
+
+            if(!paymentMethod){
+                return res.status(404).json({ message: "Método de pago no encontrado" })
+            }
+
+            res.status(200).json({ message: "Usuario eliminado exitosamente" })
+            
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Error al editar el usuario", error: error})
+        }
     }
 }
 
