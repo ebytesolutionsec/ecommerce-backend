@@ -7,14 +7,14 @@ import socket from "../../helper/socket.io.js"
 
 const payphoneController = {
 
-    redirectPayphonePayment : async( req , res) => {
+    redirectPayphonePayment: async (req, res) => {
         try {
-            
-            const { amount, clientTransactionId,reference,responseUrl,cancellationUrl,amountWithoutTax } = req.body
 
-            if(!amount || !clientTransactionId){
+            const { amount, clientTransactionId, reference, responseUrl, cancellationUrl, amountWithoutTax } = req.body
+
+            if (!amount || !clientTransactionId) {
                 return res.status(400).json({
-                    messge : "Faltan datos obligatorios"
+                    messge: "Faltan datos obligatorios"
                 })
             }
 
@@ -32,9 +32,9 @@ const payphoneController = {
                 process.env.PAYPHONE_API_URL,
                 payload,
                 {
-                    headers:{
+                    headers: {
                         Authorization: `Bearer ${process.env.TOKEN_PAYPHONE}`,
-                        "Content-Type" : "application/json"
+                        "Content-Type": "application/json"
                     }
                 }
             )
@@ -45,7 +45,7 @@ const payphoneController = {
             })
 
         } catch (error) {
-            
+
             console.error("Error Payphone:", error.response?.data || error.message);
 
             return res.status(500).json({
@@ -57,7 +57,7 @@ const payphoneController = {
         }
     },
 
-    verifyConfirmPayphone : async ( req, res ) => {
+    verifyConfirmPayphone: async (req, res) => {
 
         const session = await mongoose.startSession();
         session.startTransaction()
@@ -66,27 +66,60 @@ const payphoneController = {
 
             console.log("Aquii")
 
-            const { id , clientTransactionId, idOrden, idPaymentMethod } = req.body
+            const { id, clientTransactionId, idOrden, idPaymentMethod } = req.body
 
-            console.log("ID" , id, "Client", clientTransactionId, "order" , idOrden, "Payment Metod", idPaymentMethod)
+            console.log("ID", id, "Client", clientTransactionId, "order", idOrden, "Payment Metod", idPaymentMethod)
 
-            if(!id || !clientTransactionId || !idOrden || !idPaymentMethod ){
+            if (!id || !clientTransactionId || !idOrden || !idPaymentMethod) {
                 return res.status(400).json({
-                    messge : "Faltan datos obligatorios"
+                    messge: "Faltan datos obligatorios"
+                })
+            }
+
+            if (id === "0" || id === 0) {
+                const order = await orderSchmea.findById(idOrden)
+                    .populate("items")
+                    .session(session)
+
+                if (!order) {
+                    await session.abortTransaction()
+                    session.endSession()
+                    return res.status(404).json({ message: "Orden no encontrada" })
+                }
+
+                const io = socket.getIO()
+
+                if (order.status === "pending") {
+                    for (const item of order.items) {
+                        const product = await productSchema.findById(item.product).session(session)
+                        product.stock += item.quantity
+                        await product.save({ session })
+                        io.emit("stockUpdated", { productId: product._id, change: item.quantity })
+                    }
+                    order.status = "canceled"
+                    await order.save({ session })
+                }
+
+                await session.commitTransaction()
+                session.endSession()
+
+                return res.status(200).json({
+                    success: false,
+                    message: "Pago cancelado por el usuario"
                 })
             }
 
             const response = await axios.post(
                 process.env.PAYPHONE_API_CONFIRM,
                 {
-                    id: id, 
-                    clientTxId : clientTransactionId
+                    id: id,
+                    clientTxId: clientTransactionId
                 },
 
                 {
-                    headers:{
+                    headers: {
                         Authorization: `Bearer ${process.env.TOKEN_PAYPHONE}`,
-                        "Content-Type" : "application/json"
+                        "Content-Type": "application/json"
                     }
                 }
             )
@@ -96,23 +129,25 @@ const payphoneController = {
             const order = await orderSchmea.findById(idOrden)
                 .populate("items")
                 .session(session)
-            
-            if(!order){
+
+            if (!order) {
                 throw new Error("Orden no encontrada")
             }
+
+            console.log("Orden", order)
 
             const io = socket.getIO()
 
             console.log("Payphone Data", payphoneData)
 
-            if(payphoneData.statusCode === 3){
-                if(order.status === "paid"){
+            if (payphoneData.statusCode === 3) {
+                if (order.status === "paid") {
                     return res.status(200).json({
-                        message : "Orden ya pagada previamente"
+                        message: "Orden ya pagada previamente"
                     })
                 }
 
-                for(const item of order.items){
+                for (const item of order.items) {
                     const product = await productSchema.findById(item.product).session(session)
 
                     product.stock -= item.quantity
@@ -120,7 +155,7 @@ const payphoneController = {
 
                     io.emit("stockUpdated", {
                         productId: product._id,
-                        change : item.quantity
+                        change: item.quantity
                     })
                 }
 
@@ -130,7 +165,7 @@ const payphoneController = {
                 await paymentSchema.create(
                     [{
                         order: order._id,
-                        transaction_id : id,
+                        transaction_id: id,
                         amount: order.total,
                         status: "approved",
                         provider_response: payphoneData,
@@ -153,10 +188,10 @@ const payphoneController = {
                     message: "Pago aprobado",
                     data: payphoneData
                 });
-            }else{
+            } else {
                 console.log("Entre aqui")
-                if(order.status === "pending"){
-                    for(const item of order.items){
+                if (order.status === "pending") {
+                    for (const item of order.items) {
                         const product = await productSchema.findById(item.product).session(session)
 
                         product.stock += item.quantity
@@ -164,12 +199,12 @@ const payphoneController = {
 
                         io.emit("stockUpdated", {
                             productId: product._id,
-                            change : item.quantity
+                            change: item.quantity
                         })
                     }
 
                     order.status = "canceled",
-                    await order.save({ session })
+                        await order.save({ session })
                 }
 
                 await session.commitTransaction()
@@ -181,7 +216,7 @@ const payphoneController = {
                     data: payphoneData
                 });
             }
-            
+
         } catch (error) {
             console.error("Error Payphone:", error.response?.data || error.message);
 
