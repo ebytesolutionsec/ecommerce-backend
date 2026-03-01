@@ -3,6 +3,7 @@ import productoSchema from "../../models/producto/producto.models.js";
 import ordersSchema from "../../models/orders/orders.models.js"
 import itemOrderSchema from "../../models/item/item.order.models.js"
 import generateOrdenNumberHelper from "../../helper/generate.orden.number.helper.js"
+import paginationHelper from "../../helper/pagination.helper.js";
 
 const ordersController = {
 
@@ -109,6 +110,24 @@ const ordersController = {
                 message: 'Error al crear la orden',
                 error: error.message
             })
+        }
+    },
+
+    listOrders : async ( req , res ) => {
+        try {
+            
+            const { page, limit, ...filters } = req.query
+
+            const result = await paginationHelper.paginate(ordersSchema, {
+                page,
+                limit,
+                filter: filters
+            })
+
+            res.json(result)
+
+        } catch (error) {
+            res.status(500).json({ message: "Error al listar los pagos", error });
         }
     }
 }

@@ -38,4 +38,36 @@ const routerOrders = Router()
  */
 routerOrders.post('/orders/create', verifyToken, ordersController.createOrderController)
 
+/**
+ * @swagger
+ * /orders/list:
+ *   get:
+ *     summary: Listar ordenes con paginación
+ *     description: Obtiene un listado paginado de ordenes registrados en el sistema.
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Cantidad de registros por página
+ *     responses:
+ *       200:
+ *         description: Lista de ordenes obtenida correctamente
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Parámetros de paginación inválidos
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerOrders.get('/orders/list', verifyToken, ordersController.listOrders)
+
 export default routerOrders

@@ -108,6 +108,50 @@ const paymentController = {
         } catch (error) {
             res.status(500).json({ message: "Error al listar los pagos", error });
         }
+    },
+
+    createPaymentTransaction : async ( req , res ) => {
+        try {
+            const { orderId } = req.params
+            const { payment_method, amount, number_comprobante } = req.body
+
+            const order = await orderSchema.findById(orderId)
+
+            if(!order){
+                return res.status(404).json({ message : "Orden no encontrada" })
+            }
+
+            if(!number_comprobante){
+                return res.status(400).json({ message : "Número de comprobante obligatorio" })
+            }
+
+            if(!req.file){
+                return res.status(400).json({ message: 'No se subio ninguina imagen, Se debe subir la foto del comprobante'})
+            }
+
+            //Crear el pago pendiente
+            const payment = await paymentSchema.create({
+                order : order._id,
+                payment_method,
+                transaction_id : number_comprobante,
+                amount,
+                proof_image: `/uploads/payments/comprobant/${req.file.filename}`,
+                status: "pending"
+            })
+
+            //Asocial pago a la orden
+            order.payment = payment._id
+            order.status = "pending"
+            await order.save()
+
+            res.json({
+                message: "Comprobante enviado. En espera de validación",
+                payment
+            })
+
+        } catch (error) {
+            res.status(500).json({ message: "Error al listar los pagos", error });
+        }
     }
 
 }

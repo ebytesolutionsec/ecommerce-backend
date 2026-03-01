@@ -97,7 +97,7 @@ const routerProducto = Router()
  *       500:
  *         description: Error interno del servidor
  */
-routerProducto.post('/producto/create', verifyToken, uploadSingle, productoController.createProducto);
+routerProducto.post('/producto/create', verifyToken, uploadSingle('uploads/productos', 'img_prod'), productoController.createProducto);
 
 /**
  * @swagger

@@ -7,6 +7,7 @@ const paymentSchema = new mongoose.Schema({
     status : { type : String, enum : ['pending', 'approved', 'rejected', 'refunded'], default: 'pending'},
     transaction_id: { type: String },
     provider_response: { type: Object },
+    proof_image: { type: String },
     paid_at: { type: Date }
 },
     { timestamps : true }
