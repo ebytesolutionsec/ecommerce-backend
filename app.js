@@ -67,7 +67,7 @@ app.use(`/api/v1`, routerPayphone)
 /**
  * Servir imagenes y archivos
 */
-app.use('/uploads/productos', express.static('uploads'));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 
 export default app;
