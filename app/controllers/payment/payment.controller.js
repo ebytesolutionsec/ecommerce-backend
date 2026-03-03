@@ -152,6 +152,35 @@ const paymentController = {
         } catch (error) {
             res.status(500).json({ message: "Error al listar los pagos", error });
         }
+    },
+
+    aprovedPaymentAdmin : async ( req , res ) => {
+        try {
+            
+            const { paymentId } = req.params
+
+            const payment = await paymentSchema.findById(paymentId).populate("order")
+
+            if(!payment){
+                return res.status(404).json({ message: "Pago no encontrado" });
+            }
+
+            payment.status = "approved"
+            payment.paid_at = new Date()
+            await payment.save()
+
+            //Actualizar la orden
+            const order = await orderSchema.findById(payment.order._id)
+            order.status = "paid"
+            await order.save()
+
+            res.json({
+                message : "Pago aprobado exitosamente"
+            })
+
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
 
 }

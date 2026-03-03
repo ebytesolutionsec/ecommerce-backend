@@ -130,4 +130,27 @@ routerPayment.get('/payment/list/all', verifyToken, paymentController.listPaymen
  */
 routerPayment.post('/payment/send/comprobante/:orderId', verifyToken, uploadSingle('uploads/payments/comprobant', 'proof_image'), paymentController.createPaymentTransaction)
 
+
+/**
+ * @swagger
+ * /payment/aproved/{paymentId}:
+ *   get:
+ *     summary: Aprovar el pago realizado
+ *     tags: [Payment]
+ *     parameters:
+ *       - in: query
+ *         name: paymentId
+ *         description: Id del pago
+ *     responses:
+ *       200:
+ *         description: Actualiza el estado del pago
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: Error al actualiar el apgo
+ *       500:
+ *         description: Error interno del servidor
+ */
+routerPayment.post('/payment/aproved/:paymentId', verifyToken, paymentController.aprovedPaymentAdmin)
+
 export default routerPayment
